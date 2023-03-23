@@ -1,7 +1,9 @@
-import torch.nn as nn
-import torch
 import d2l.torch as d2l
+import torch
+import torch.nn as nn
+
 from utils import masked_softmax
+
 
 #@save
 class Seq2SeqEncoder(nn.Module):
@@ -53,6 +55,8 @@ class Seq2SeqDecoder(nn.Module):
 
         final_output = self.ffn(output)
         # final_output (batch_size, num_steps, vocal_size)
+
+        return final_output
         
 
         
