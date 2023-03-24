@@ -15,6 +15,9 @@ class MaskedSoftmaxCELoss(nn.CrossEntropyLoss):
         # pred (batch_size, num_of_classes, multiple dimension of loss)
         # label (batch_size)
         self.reduction = "none"
-        # 阻止CrossEntropyLoss对batch_size维度进行loss聚合
+        # 阻止CrossEntropyLoss进行loss聚合
         unmasked_loss = super(MaskedSoftmaxCELoss).forward(pred, label)
         # unmasked_loss (batch_size, multiple dimension of loss)
+        mask = sequence_mask(unmasked_loss, valid_len)
+        return (unmasked_loss * mask).mean(dim=1)
+        # return value (batch_size) 自带squeeze效果
