@@ -1,5 +1,6 @@
-import math
 import collections
+import math
+
 
 def bleu(pred_seq, label_seq, k):  #@save
     """计算BLEU"""

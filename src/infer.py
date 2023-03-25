@@ -1,5 +1,6 @@
-import torch
 import d2l.torch as d2l
+import torch
+
 
 #@save
 def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps,

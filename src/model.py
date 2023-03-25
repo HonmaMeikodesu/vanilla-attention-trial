@@ -41,7 +41,7 @@ class Seq2SeqDecoder(nn.Module):
     def forward(self, X, state):
         X: torch.Tensor = self.emb(X)
         X = X.permute(1, 0, 2)
-        enc_context: torch.Tensor = self.init_state(state)[-1]
+        enc_context: torch.Tensor = state[-1]
         # X (num_steps, batch_size, embed_size)
         # enc_context (batch_size, num_hidden)
         enc_context = enc_context.repeat(X.shape[0], 1, 1) # 广播维度，为了与X的embed_size维进行concat
@@ -67,10 +67,14 @@ class EncoderDecoder(nn.Module):
     Defined in :numref:`sec_encoder-decoder`"""
     def __init__(self, encoder, decoder, **kwargs):
         super(EncoderDecoder, self).__init__(**kwargs)
-        pass
+        self.encoder = encoder
+        self.decoder = decoder
 
     def forward(self, enc_X, dec_X, *args):
-        pass
+        enc_outputs = self.encoder(enc_X)
+        dec_init_state = self.decoder.init_state(enc_outputs)
+        dec_outputs = self.decoder(dec_X, dec_init_state)
+        return dec_outputs
     
 
 class AdditiveAttention(nn.Module):

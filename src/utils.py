@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 #@save
 def sequence_mask(X, valid_len, value=0):
     """在序列中屏蔽不相关的项"""
