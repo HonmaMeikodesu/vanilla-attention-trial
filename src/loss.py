@@ -13,10 +13,10 @@ class MaskedSoftmaxCELoss(nn.CrossEntropyLoss):
         # valid_len(batch_size, int)
         pred = pred.permute(0, 2, 1)
         # pred (batch_size, num_of_classes, multiple dimension of loss)
-        # label (batch_size)
+        # label (batch_size, multiple dimension of loss)
         self.reduction = "none"
         # 阻止CrossEntropyLoss进行loss聚合
-        unmasked_loss = super(MaskedSoftmaxCELoss).forward(pred, label)
+        unmasked_loss = super(MaskedSoftmaxCELoss, self).forward(pred, label)
         # unmasked_loss (batch_size, multiple dimension of loss)
         mask = sequence_mask(unmasked_loss, valid_len)
         return (unmasked_loss * mask).mean(dim=1)

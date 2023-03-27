@@ -46,14 +46,14 @@ class Seq2SeqDecoder(nn.Module):
         # enc_context (batch_size, num_hidden)
         enc_context = enc_context.repeat(X.shape[0], 1, 1) # 广播维度，为了与X的embed_size维进行concat
         # enc_context (num_steps, batch_size, num_hidden)
-        X_concat_context = torch.concat(X, enc_context, dim=2)
+        X_concat_context = torch.concat([X, enc_context], dim=2)
         # X_concat_context (num_steps, batch_size, num_hidden + embed_size)
         
         output, __ = self.rnn(X_concat_context)
         # output (batch_size, num_steps, num_hidden)
         # hidden_state (num_layers, batch_size, num_hidden)
 
-        final_output = self.ffn(output)
+        final_output = self.ffn(output).permute(1, 0, 2)
         # final_output (batch_size, num_steps, vocal_size)
 
         return final_output
