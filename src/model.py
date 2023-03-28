@@ -15,7 +15,6 @@ class Seq2SeqEncoder(nn.Module):
         self.rnn = nn.GRU(embed_size, num_hiddens, num_layers, dropout=dropout)
 
     def forward(self, X, *args):
-        # X (batch_size, num_steps, vocab)
         X: torch.Tensor = self.emb(X)
         # X (batch_size, num_steps, embed_size)
         X = X.permute(1, 0, 2)
@@ -49,14 +48,14 @@ class Seq2SeqDecoder(nn.Module):
         X_concat_context = torch.concat([X, enc_context], dim=2)
         # X_concat_context (num_steps, batch_size, num_hidden + embed_size)
         
-        output, __ = self.rnn(X_concat_context)
+        output, hidden_state = self.rnn(X_concat_context)
         # output (num_steps, batch_size, num_hidden)
         # hidden_state (num_layers, batch_size, num_hidden)
 
         final_output = self.ffn(output).permute(1, 0, 2)
         # final_output (batch_size, num_steps, vocal_size)
 
-        return final_output
+        return final_output, hidden_state
         
 
         

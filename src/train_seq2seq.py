@@ -1,9 +1,11 @@
 import d2l.torch as d2l
 import torch
 import torch.nn as nn
+from infer import predict_seq2seq
 
 from model import EncoderDecoder, Seq2SeqDecoder, Seq2SeqEncoder
 from loss import MaskedSoftmaxCELoss
+from pathlib import Path
 
 
 #@save
@@ -34,7 +36,7 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
                           device=device).reshape(-1, 1).to(device)
                 # bos (batch_size, 1)
                 dec_input = torch.concat([bos, Y[:, :-1]], dim=1)
-                output = net(X, dec_input)
+                output, __ = net(X, dec_input)
                 l = loss(output, Y, Y_valid_len)
                 with torch.no_grad():
                     total_loss += l.sum().data
@@ -43,6 +45,7 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
                 optimizer.step()
             if (x + 1) % 10 == 0:
                 print(f"epoch: {x + 1}, loss {total_loss}")
+                predict_seq2seq(net, 'i\'m home .', src_vocab, tgt_vocab, num_steps, device)
 
 batch_size = 20
 
