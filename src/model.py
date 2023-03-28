@@ -11,7 +11,7 @@ class Seq2SeqEncoder(nn.Module):
     def __init__(self, vocab_size, embed_size, num_hiddens, num_layers,
                  dropout=0, **kwargs):
         super(Seq2SeqEncoder, self).__init__(**kwargs)
-        self.emb = nn.Embedding(vocab_size, num_hiddens)
+        self.emb = nn.Embedding(vocab_size, embed_size)
         self.rnn = nn.GRU(embed_size, num_hiddens, num_layers, dropout=dropout)
 
     def forward(self, X, *args):
@@ -30,7 +30,7 @@ class Seq2SeqDecoder(nn.Module):
     def __init__(self, vocab_size, embed_size, num_hiddens, num_layers,
                  dropout=0, **kwargs):
         super(Seq2SeqDecoder, self).__init__(**kwargs)
-        self.emb = nn.Embedding(vocab_size, num_hiddens) # 用于强制教学
+        self.emb = nn.Embedding(vocab_size, embed_size) # 用于强制教学
         self.rnn = nn.GRU(embed_size + num_hiddens, num_hiddens, num_layers, dropout=dropout)
         self.ffn = nn.Linear(num_hiddens, vocab_size) # 最终决策层
 
@@ -50,7 +50,7 @@ class Seq2SeqDecoder(nn.Module):
         # X_concat_context (num_steps, batch_size, num_hidden + embed_size)
         
         output, __ = self.rnn(X_concat_context)
-        # output (batch_size, num_steps, num_hidden)
+        # output (num_steps, batch_size, num_hidden)
         # hidden_state (num_layers, batch_size, num_hidden)
 
         final_output = self.ffn(output).permute(1, 0, 2)

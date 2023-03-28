@@ -10,7 +10,7 @@ class MaskedSoftmaxCELoss(nn.CrossEntropyLoss):
     def forward(self, pred, label, valid_len):
         # pred (batch_size, num_steps, vocab_size)
         # label (batch_size, num_steps)
-        # valid_len(batch_size, int)
+        # valid_len(batch_size)
         pred = pred.permute(0, 2, 1)
         # pred (batch_size, num_of_classes, multiple dimension of loss)
         # label (batch_size, multiple dimension of loss)

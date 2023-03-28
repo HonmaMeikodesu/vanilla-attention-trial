@@ -24,6 +24,7 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
     net.train()
 
     for x in range(num_epochs):
+            total_loss = 0
             for batch in data_iter:
                 optimizer.zero_grad()
                 X, X_valid_len, Y, Y_valid_len = (x.to(device) for x in batch)
@@ -34,16 +35,14 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
                 # bos (batch_size, 1)
                 dec_input = torch.concat([bos, Y[:, :-1]], dim=1)
                 output = net(X, dec_input)
-                # output ()
-                output
                 l = loss(output, Y, Y_valid_len)
-                total_loss = l.sum()
-                total_loss.backward()
+                with torch.no_grad():
+                    total_loss += l.sum().data
+                l.sum().backward()
                 d2l.grad_clipping(net, 1)
                 optimizer.step()
-                with torch.no_grad():
-                    if (x + 1) % 10 == 0:
-                        print(f"loss {total_loss}")
+            if (x + 1) % 10 == 0:
+                print(f"epoch: {x + 1}, loss {total_loss}")
 
 batch_size = 20
 
