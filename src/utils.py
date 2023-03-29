@@ -17,8 +17,11 @@ def sequence_mask(X, valid_len, value=0):
     result[~mask] = value
     return result
 
-def masked_softmax(X, valid_lens):
+def masked_softmax(X, valid_len):
     """Perform softmax operation by masking elements on the last axis.
 
     Defined in :numref:`sec_attention-scoring-functions`"""
-    pass
+    # X (batch_size, num_steps)
+    # valid_lens (batch_size)
+    mask = sequence_mask(X, valid_len)
+    return nn.functional.softmax(X * mask, dim=1)

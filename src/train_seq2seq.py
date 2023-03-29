@@ -36,7 +36,7 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
                           device=device).reshape(-1, 1).to(device)
                 # bos (batch_size, 1)
                 dec_input = torch.concat([bos, Y[:, :-1]], dim=1)
-                output, __ = net(X, dec_input)
+                output, __ = net(X, dec_input, X_valid_len, Y_valid_len)
                 l = loss(output, Y, Y_valid_len)
                 with torch.no_grad():
                     total_loss += l.sum().data
