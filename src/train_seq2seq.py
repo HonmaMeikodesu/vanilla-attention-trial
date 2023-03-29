@@ -45,25 +45,3 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
                 optimizer.step()
             if (x + 1) % 10 == 0:
                 print(f"epoch: {x + 1}, loss {total_loss}")
-                predict_seq2seq(net, 'i\'m home .', src_vocab, tgt_vocab, num_steps, device)
-
-batch_size = 20
-
-emb_size = 64
-
-num_steps = 10
-
-num_hiddens = 64
-
-num_epoch = 400
-
-lr = 0.01
-
-device = d2l.try_gpu()
-
-train_iter, src_vocab, tgt_vocab = d2l.load_data_nmt(batch_size, num_steps)
-enc = Seq2SeqEncoder(len(src_vocab), emb_size, num_hiddens, 2, 0.1)
-dec = Seq2SeqDecoder(len(tgt_vocab), emb_size, num_hiddens, 2, 0.1)
-net = EncoderDecoder(enc, dec)
-
-train_seq2seq(net, train_iter, lr, num_epoch, tgt_vocab, device)
