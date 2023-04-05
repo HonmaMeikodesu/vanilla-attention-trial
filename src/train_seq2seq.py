@@ -22,9 +22,9 @@ def train_seq2seq(net, data_iter, lr, num_epochs, src_vocab, tgt_vocab, device, 
 
     optimizer = torch.optim.Adam(net.parameters(), lr=lr)
     loss = MaskedSoftmaxCELoss()
-    net.train()
 
     for x in range(num_epochs):
+            net.train()
             total_loss = 0
             for batch in data_iter:
                 optimizer.zero_grad()
@@ -44,10 +44,10 @@ def train_seq2seq(net, data_iter, lr, num_epochs, src_vocab, tgt_vocab, device, 
                 optimizer.step()
             if (x + 1) % 10 == 0:
                 print(f"epoch: {x + 1}, loss {total_loss}")
-                engs = ['go .', "i lost .", 'he\'s calm .', 'i\'m home .']
-                fras = ['va !', 'j\'ai perdu .', 'il est calme .', 'je suis chez moi .']
+                engs = ['go on .', "i lost .", 'he\'s calm .', 'i\'m home .']
+                fras = ['poursuis .', 'j\'ai perdu .', 'il est calme .', 'je suis chez moi .']
                 for eng, fra in zip(engs, fras):
-                    translation, dec_attention_weight_seq = predict_seq2seq(
-                        net, eng, src_vocab, tgt_vocab, torch.LongTensor([2, 3, 3, 3]).to(device), num_steps, device)
+                    translation = predict_seq2seq(
+                        net, eng, src_vocab, tgt_vocab, torch.LongTensor([3]).to(device), num_steps, device)
                     print(f'{eng} => {translation}, ',
                         f'bleu {d2l.bleu(translation, fra, k=2):.3f}')

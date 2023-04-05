@@ -19,6 +19,7 @@ def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, enc_valid_len, num_
     output_sentences = []
     for _ in range(num_steps):
         dec_output, dec_state = net.decoder(tgt_tokens, dec_state)
+        dec_state = (enc_outputs[0], dec_state[1].unsqueeze(dim=0), enc_valid_len)
         # dec_output (batch_size=1, num_steps=1, vocal_size)
         tgt_tokens = torch.argmax(dec_output, dim=2)
         # tgt_tokens (batch_size=1, num_steps=1)
@@ -26,5 +27,5 @@ def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, enc_valid_len, num_
         if tgt_vocab["<eos>"] == Y.item():
             break
         output_sentences.append(tgt_vocab.idx_to_token[Y.item()])
-    print(" ".join(output_sentences))
+    return " ".join(output_sentences)
 
