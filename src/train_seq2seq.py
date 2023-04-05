@@ -1,15 +1,14 @@
+
 import d2l.torch as d2l
 import torch
 import torch.nn as nn
-from infer import predict_seq2seq
 
-from model import EncoderDecoder, Seq2SeqDecoder, Seq2SeqEncoder
+from infer import predict_seq2seq
 from loss import MaskedSoftmaxCELoss
-from pathlib import Path
 
 
 #@save
-def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
+def train_seq2seq(net, data_iter, lr, num_epochs, src_vocab, tgt_vocab, device, num_steps):
     """训练序列到序列模型"""
     def xavier_init_weights(m):
         if type(m) == nn.Linear:
@@ -45,3 +44,10 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
                 optimizer.step()
             if (x + 1) % 10 == 0:
                 print(f"epoch: {x + 1}, loss {total_loss}")
+                engs = ['go .', "i lost .", 'he\'s calm .', 'i\'m home .']
+                fras = ['va !', 'j\'ai perdu .', 'il est calme .', 'je suis chez moi .']
+                for eng, fra in zip(engs, fras):
+                    translation, dec_attention_weight_seq = predict_seq2seq(
+                        net, eng, src_vocab, tgt_vocab, torch.LongTensor([2, 3, 3, 3]).to(device), num_steps, device)
+                    print(f'{eng} => {translation}, ',
+                        f'bleu {d2l.bleu(translation, fra, k=2):.3f}')

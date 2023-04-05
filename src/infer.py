@@ -3,7 +3,7 @@ import torch
 
 
 #@save
-def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps,
+def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, enc_valid_len, num_steps,
                     device):
     """序列到序列模型的预测"""
     net.eval()
@@ -12,7 +12,7 @@ def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps,
     src_tokens = torch.tensor(d2l.truncate_pad(src_tokens, num_steps, src_vocab["<pad>"]), device=device).type(torch.long).unsqueeze(dim=0)
     # src_tokens (batch_size=1, num_steps)
     enc_outputs = net.encoder(src_tokens)
-    dec_state = net.decoder.init_state(enc_outputs)
+    dec_state = net.decoder.init_state(enc_outputs, enc_valid_len)
     
     tgt_tokens = torch.tensor([tgt_vocab["<bos>"]], dtype=torch.long, device=device).unsqueeze(dim=0)
     # tgt_tokens (batch_size=1, num_steps=1)

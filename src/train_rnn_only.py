@@ -1,5 +1,6 @@
-from model import Seq2SeqEncoder, Seq2SeqDecoder, EncoderDecoder
 import d2l.torch as d2l
+
+from model import EncoderDecoder, Seq2SeqDecoder, Seq2SeqEncoder
 from train_seq2seq import train_seq2seq
 
 batch_size = 20
@@ -21,4 +22,4 @@ enc = Seq2SeqEncoder(len(src_vocab), emb_size, num_hiddens, 2, 0.1)
 dec = Seq2SeqDecoder(len(tgt_vocab), emb_size, num_hiddens, 2, 0.1)
 net = EncoderDecoder(enc, dec)
 
-train_seq2seq(net, train_iter, lr, num_epoch, tgt_vocab, device)
+train_seq2seq(net, train_iter, lr, num_epoch, src_vocab, tgt_vocab, device, num_steps)
