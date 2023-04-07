@@ -49,5 +49,9 @@ def train_seq2seq(net, data_iter, lr, num_epochs, src_vocab, tgt_vocab, device, 
                 for eng, fra in zip(engs, fras):
                     translation = predict_seq2seq(
                         net, eng, src_vocab, tgt_vocab, torch.LongTensor([3]).to(device), num_steps, device)
+                    if len(translation.split(" ")) == 1:
+                        arr = translation.split(" ")
+                        arr.append(".")
+                        translation = " ".join(arr)
                     print(f'{eng} => {translation}, ',
                         f'bleu {d2l.bleu(translation, fra, k=2):.3f}')

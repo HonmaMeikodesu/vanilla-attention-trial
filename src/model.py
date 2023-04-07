@@ -43,7 +43,7 @@ class Seq2SeqDecoder(nn.Module):
     def forward(self, X, state):
         X: torch.Tensor = self.emb(X)
         X = X.permute(1, 0, 2)
-        enc_context: torch.Tensor = state[-1]
+        enc_context: torch.Tensor = state[1]
         # X (num_steps, batch_size, embed_size)
         # enc_context (batch_size, num_hidden)
         enc_context = enc_context.repeat(X.shape[0], 1, 1) # 广播维度，为了与X的embed_size维进行concat
